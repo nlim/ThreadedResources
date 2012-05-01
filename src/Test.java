@@ -10,7 +10,7 @@
  */
 import java.util.ArrayList;
 public class Test {
-	private static final int numUsers = 10;
+	private static final int numUsers = 15;
 	
 	public static void main (String [] args) throws InterruptedException{
 		ResourcePool<String> rp = new ResourcePool<String>();
@@ -18,6 +18,7 @@ public class Test {
 		String r2 = "two";
 		String r3 = "three";
 		String r4 = "four";
+		String r5 = "five";
 		rp.open();
 		
 		ArrayList<ResourceUser<String>> users = new ArrayList<ResourceUser<String>>();
@@ -34,9 +35,10 @@ public class Test {
 		rp.add(r2);
 		rp.add(r3);
 		rp.add(r4);
+		rp.add(r5);
 		
 		Thread.sleep(1*1000);
-		rp.closeNow();
+		rp.close();
 		
 	}
 

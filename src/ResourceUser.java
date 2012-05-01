@@ -18,7 +18,7 @@ public class ResourceUser<R> extends Thread {
 	private int id;
 	private final Random random = new Random();
 	private static final int useMax = 10;
-	private static final int waitMax = 2;
+	private static final int waitMax = 5;
 	public ResourceUser(int id, ResourcePool<R> resourcePool) {
 		this.id = id;
 		this.resourcePool = resourcePool;
@@ -30,7 +30,9 @@ public class ResourceUser<R> extends Thread {
 		R r = null;
 		int seconds = 0;
 		try {
-			r = resourcePool.acquire(waitMax*1000, TimeUnit.SECONDS);
+			long started_wait = System.currentTimeMillis();
+			r = resourcePool.acquire(waitMax*1000, TimeUnit.MILLISECONDS);
+			long time_waited = System.currentTimeMillis() - started_wait;
 			didAcquire = r != null;
 			seconds = random.nextInt(useMax)+1;
 			if (didAcquire) {
@@ -39,8 +41,7 @@ public class ResourceUser<R> extends Thread {
 				resourcePool.release(r);
 				System.out.printf("ResourceUser #%d released resource %s\n", id, r);
 			} else {
-				//System.out.printf("ResourceUser #%d could not get a resouce within %d seconds.\n",id, waitMax);
-				System.out.printf("ResourceUser #%d could not get a resource.\n",id);
+				System.out.printf("ResourceUser #%d could not get a resource in %d milliseconds.\n", id, time_waited);
 			}
 		} catch (InterruptedException e) {
 			System.out.printf("ResourceUser #%d was interrupted.\n", id);
