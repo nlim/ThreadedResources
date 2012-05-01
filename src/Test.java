@@ -4,6 +4,7 @@
  * 
  * This class creates bunch of ResourceUsers, initializes them
  * with an open ResourcePool, and lets the ResourceUser threads run.
+ * Sleeps a bit, then adds a bunch of resources
  * Then blocks until the ResourcePool can be closed. 
  * 
  * 
