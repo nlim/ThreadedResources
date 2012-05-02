@@ -213,16 +213,23 @@ public class ResourcePool<R> {
 	 * If it is the one to be removed, then remove it.
 	 * 
 	 */
-	public boolean remove(R resource) throws InterruptedException {
+	@SuppressWarnings("finally")
+	public boolean remove(R resource) {
 		lock.lock();
-		if(!availableResources.contains(resource) && !resourcesInUse.contains(resource)) return false;
-		while(!availableResources.contains(resource)){
-			System.out.printf("Waiting to remove resource: %s\n", resource);
-			resourceAvailable.await();
+		boolean didRemove = false;
+		try {
+			if(!availableResources.contains(resource) && !resourcesInUse.contains(resource)) return false;
+			while(!availableResources.contains(resource)){
+				System.out.printf("Waiting to remove resource: %s\n", resource);
+				resourceAvailable.await();
+			}
+			didRemove =  availableResources.remove(resource);
+			if (didRemove) System.out.printf("Removed resource: %s\n", resource);
+		}catch (InterruptedException e) {
+			System.err.printf("Interupted while waiting to remove %s\n", resource);
+		} finally {
+			lock.unlock();
 		}
-		boolean didRemove =  availableResources.remove(resource);
-		if (didRemove) System.out.printf("Removed resource: %s\n", resource);
-		lock.unlock();
 		return didRemove;
 	}
 }
